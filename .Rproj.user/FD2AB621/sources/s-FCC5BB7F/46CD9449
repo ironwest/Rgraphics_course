@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1561206783143.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "46CD9449",
+    "lastKnownWriteTime" : 1561206884,
+    "last_content_update" : 1561206884248,
+    "path" : "C:/Users/ma060/Desktop/graph online course/RgraphicsCourse/gv/kihon_03.gv",
+    "project_path" : "gv/kihon_03.gv",
+    "properties" : {
+        "cursorPosition" : "24,13",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 4,
+    "source_on_save" : true,
+    "source_window" : "",
+    "type" : "graphviz"
+}

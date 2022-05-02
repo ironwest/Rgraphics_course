@@ -1,0 +1,30 @@
+digraph intro06 {
+  
+ node[shape='circle']
+ A[label='要因X', fontsize=18];
+ B[label='喫煙'];
+ C[label='男'];
+ D[label='病気Z', shape='rectangle'];
+ 
+ edge[color='grey']
+ A -> B;
+ A -> C;
+ 
+ B -> D[label='真の\n原因', color='red'];
+ C -> D[label='見せかけの\n原因', color='#42a1f4', style='dashed'];
+ 
+}
+
+#どうでしょうか, 他にも色々と遊ぶことができます。
+#これ以降はフローチャートを描くことを
+#主眼において説明をするため、色等の説明は行いません
+#が、より細かくdot言語のデザインについて知りたい方は、
+
+#qiita や google などで、[DOT言語]  [graphviz dot]等と
+#調べると、良いと思います
+#(本当に色々できるので、私も全部の機能は把握できていません)
+
+
+#以上でDOT言語の導入は終了です。
+#次以降の動画では、どのように、このDOT言語とRを組み合わせて、
+#フローチャート等のグラフを自動的に生成するかを説明していきます。

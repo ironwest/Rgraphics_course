@@ -1,0 +1,20 @@
+digraph intro05 {
+  
+ node[shape='circle']
+ A[label='要因X'];
+ B[label='喫煙'];
+ C[label='男'];
+ D[label='病気Z', shape='rectangle'];
+ 
+ edge[color='grey']
+ A -> B;
+ A -> C;
+ 
+ B -> D[label='真の\n原因', color='red'];
+ C -> D[label='見せかけの\n原因', color='#42a1f4'];
+ 
+}
+
+#どうでしょうか, 他にもbgcolorで背景の色を設定できたり
+#fontsizeで文字サイズを変えれたり、グラフを描くために必要な
+#ことをスクリプトで表現が可能となります。

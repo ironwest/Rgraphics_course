@@ -1,0 +1,24 @@
+digraph name {
+  layout=neato
+  
+  #node:
+  node [shape = rectangle]
+  m1 [pos='0,0!' ,label  = '最初の患者数\n(N = <<m1>>)'];
+  m2 [pos='0,-2!',label  = '年齢で除外後の患者数\n(N = <<m2>>)'];
+  m3 [pos='0,-4!',label  = '最終的な患者数\n(N = <<m3>>)'];
+  
+  ex1 [pos='2,-1!' ,label = '年齢が20歳未満(N=<<ex1>>)'];
+  ex2 [pos='-2,-3!',label = '同意の取り下げ(N=<<ex2>>)'];
+
+  inv1 [pos='0,-1!',label = '', shape=invis, width=0, height=0]
+  inv2 [pos='0,-3!',label = '', shape=invis, width=0, height=0]
+
+  m1   -> inv1 [dir='none']
+  inv1 -> m2 
+  m2   -> inv2 [dir='none']
+  inv2 -> m3
+  
+  inv1 -> ex1
+  inv2 -> ex2
+}
+

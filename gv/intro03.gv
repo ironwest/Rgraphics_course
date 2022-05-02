@@ -1,0 +1,24 @@
+digraph intro03 {
+ A[label='文字:A'];
+ B[label='左側の文字:B'];
+ C[label='右側の文字:C'];
+ D[label='一番下'];
+ 
+ 
+ A -> B[label='線のラベル'];
+ A -> C[label='左のエッジ'];
+ 
+ B,C -> D;
+ 
+}
+
+# Labelの足し方
+
+#では、グラフにラベル(文字)を記載していきます。
+
+#Labelは、
+# Node[label='文字列']
+# Node -> Node[label='文字列2']
+
+#という形で記載します。
+

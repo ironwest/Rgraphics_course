@@ -1,0 +1,13 @@
+digraph intro01 {
+  
+  #node creation
+  A[label='肥満'];
+  B[label='高血圧'];
+  C[label='糖尿病'];
+  D[label='喫煙'];
+  E[label='心筋梗塞'];
+  
+  A -> B -> E;
+  A -> C -> E;
+  D -> E;
+}

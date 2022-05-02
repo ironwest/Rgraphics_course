@@ -1,0 +1,45 @@
+digraph g {
+  layout=neato;
+  rankdir=TB;
+  bgcolor=white;
+  splines=ortho;
+  nodesep=0.1;
+  ranksep=0.1;
+  
+  edge[arrowsize=.3, color=black];
+  node[shape=box, color=black, fontsize=6]
+  
+  l1   [pos="0,6!", shape=plaintext, label="Enrollment"]
+  l2   [pos="0,3!", shape=plaintext, label="Allocation"]
+  l3   [pos="0,2!", shape=plaintext, label="Follow-Up"]
+  l4   [pos="0,1!", shape=plaintext, label="Analysis"]
+  
+  
+  a1   [pos="2,6!", width=1.0, label="Assessed for eligibility \l(n= )"]
+  a2   [pos="2,5!", style="none", label="", width=0, height=0];
+  b    [pos="3.5,5!", width=2.0, label="Excluded (n = ) \l \l Reason 1 (n = )\l Reason 222222222 (n = )\l Reason 3333  33333  33333 (n = )\l Reason 4 (n = )\l Reason 5 (n = )\l Reason 6 (n = ) \l "]
+  a3   [pos="2,4!", width=1.0, label="Randomized (n = )"]
+  a4   [pos="2,3.5!", label="", width=0, height=0];
+  a4int[pos="1.5,3.5!", style="none", label="", width=0, height=0];
+  a4con[pos="4,3.5!", style="none", label="", width=0, height=0];
+  
+  int1 [pos="1.5,3!", width=2.0, label="Allocated to ARP (n = )"]
+  con1 [pos="4,3!", width=2.0, label="Allocated to CON (n = )"]
+  int2 [pos="1.5,2!", width=2.0, label="Lost to follow-up (give reasons) (n = ) \l \l Discontinued intervention (give reasons) (n = ) \l Discontinued intervention (give reasons) (n = ) \l Discontinued intervention (give reasons) (n = ) \l Discontinued intervention (give reasons) (n = ) \l"]
+  con2 [pos="4,2!", width=2.0, label="Lost to follow-up (give reasons) (n = ) \l \l Discontinued intervention (give reasons) (n = ) \l Discontinued intervention (give reasons) (n = ) \l"]
+  int3 [pos="1.5,1!", width=2.0, label="Analyzed (n = ) \l Exluded from analysis (give reasons) (n = )"]
+  con3 [pos="4,1!", width=2.0, label="Analyzed (n = ) \l Exluded from analysis (n = 0)"]
+  
+  
+  
+  a1 -> a2 [dir="none"];
+  a2 -> b;
+  a2 -> a3;
+  a3 -> a4 [dir="none"];
+  a4 -> a4int [dir="none"];
+  a4 -> a4con [dir="none"];
+  a4int -> int1 -> int2 -> int3;
+  a4con -> con1 -> con2 -> con3;
+  l1 -> l2 -> l3 -> l4 [style="invis"];
+}
+

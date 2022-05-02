@@ -1,0 +1,36 @@
+digraph name {
+  layout=neato;
+  #node:
+  node [shape = rectangle]
+  m1 [pos='0,0!',label  = '処置XXXが実施された患者数\n(N = 1000)'];
+  m2 [pos='0,-2!',label  = '対象となり参加の同意を得た患者数\n(N = 870)'];
+  m3 [pos='0,-4!',label  = '処置が成功し、対象となった\n最終的な患者数(N = 830)'];
+  
+  ex1 [pos='3,-1!', label = '除外 (N =130)\l    年齢が20歳未満(N=30)\l    記録が不十分(N=100)\l'];
+  ex2 [pos='-3,-3!',label = '除外 (N =40)\l    処置が失敗 (N=30)\l    同意の取り下げ(N=10)\l'];
+
+  inv1 [pos='0,-1!', label = "", shape=invis, width=0, height=0]
+  inv2 [pos='0,-3!'label = "", shape=invis, width=0, height=0]
+
+  m1   -> inv1 [dir="none"]
+  inv1 -> m2 
+  m2   -> inv2 [dir="none"]
+  inv2 -> m3
+  
+  inv1 -> ex1
+  inv2 -> ex2
+}
+
+
+
+
+#m1を0,0として、配置してみました。
+
+#                  m1    0, 0
+#                  inv1  0,-1  ->  ex1 3,-1
+#                  m2    0,-2  
+# ex2 -3, -3  <-   inv2  0,-3
+#                  m3    0,-4
+
+# すこしわかりづらいかもしれませんが、こんな感じ！
+# 後は、自動でラベルを置き換えることを考えていきましょう。

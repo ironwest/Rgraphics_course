@@ -1,0 +1,20 @@
+digraph name {
+  
+  #node:
+  node [shape = rectangle]
+  m1[label  = '処置XXXが実施された患者数 \n (N = 1000)'];
+  m2[label  = '対象となり参加の同意を得た患者数 \n (N = 870)'];
+  m3[label  = '処置が成功し、対象となった\n最終的な患者数(N = 830)'];
+  
+  ex1[label = '除外 (N =130) \l \  \ 年齢が20歳未満(N=30) \l \  記録が不十分(N=100) \l'];
+  ex2[label = '除外 (N =40) \l 処置が失敗 (N=30) \l 同意の取り下げ(N=10)'];
+}
+
+
+#流れ：
+# ノードを足す
+# ラベルの設定
+#  ->改行したい場合
+# 形の設定
+# node[shape = rectangle]での一括設定
+# shape = rectangleでの個別設定

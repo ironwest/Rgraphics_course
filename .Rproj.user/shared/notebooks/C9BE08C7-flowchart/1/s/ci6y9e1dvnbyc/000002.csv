@@ -1,0 +1,19 @@
+"0","add_atat <- function(graph_string, atat_list){
+  
+  atat_string <- str_c(""\n["", 1:length(atat_list), ""]:'"", atat_list,""'"") %>% 
+    reduce(str_c) %>% 
+    str_replace_all(""\\\\l"",""\\\\\\\\\\\\\\\\l"") %>% 
+    str_replace_all(""\\\\r"",""\\\\\\\\\\\\\\\\r"")
+  
+  result <- str_c(graph_string, atat_string)
+  
+  #reduceはまだ解説していない関数ですが、reduce、map系の関数の説明でまたコースを作成する予定です。一応、簡易な理解としては、パイプ以前で与えられたすべての要素を順番にstr_cで処理して、一つの結果を返す関数という理解をなんとなくしておいていただくだけでここではOKです。
+}
+"
+"2","Warning message:
+"
+"2","In strsplit(code, ""\n"", fixed = TRUE) :"
+"2","
+ "
+"2"," input string 1 is invalid in this locale
+"

@@ -1,0 +1,298 @@
+---
+title: "flowchart"
+output:
+  html_document:
+    df_print: paged
+editor_options:
+  chunk_output_type: console
+---
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+library(tidyverse)
+library(DiagrammeR)
+```
+
+
+# dot言語で学ぶフローチャート
+
+
+## 導入
+
+このセクションからは、Rnotebookを利用して解説を進めていきます。
+単純に、説明の都合です。
+
+このセクションでは、R言語は基本的に脇役な感じになりますので、
+R言語以外に興味がない場合は、飛ばしていただいてもよいかと思います。
+
+が、
+
+dot言語にある程度習熟すると、フローチャートを自動的
+に生成できるようになる等のメリットがあるためおすすめです！
+
+
+まずは、dot言語がどういったものかをイメージでつかんでみましょう。
+
+`intro01.gv`
+
+を開いて、Rmarkdownで表示することをしてみましよう。
+
+```{r comment=''}
+cat(read_lines('gv/intro01.gv'), sep = '\n')
+```
+
+```{r}
+grViz("gv/intro01.gv")
+```
+
+こんな感じで、スクリプトファイルから、画像の生成が可能となります。
+実質9行でこの画像が生成できるというところ、すごくありませんか？
+
+これから、
+ * 簡単なフローチャートを通して基本の習得
+ * 動的なフローチャートの生成
+
+というステップで解説していきます！
+
+# dot言語の基本
+
+## .gvファイルの構成
+
+`kihon_01kousei.gv`
+
+```{r comment=''}
+cat(read_lines('gv/kihon_01kousei.gv'), sep = '\n')
+```
+
+```{r}
+grViz("gv/kihon_01kousei.gv")
+```
+
+こんな感じで、digraph{}というものがdot言語で現すグラフの基本となります。
+これに、ノードと呼ばれる点とエッジと呼ばれる線を足していくことでグラフを作成していきます。
+
+
+## ノードの作成
+
+ここからは、簡単なフローチャートを作って行きます。
+ここで目標とする形は、パワーポイントへ。
+
+`kihon_02.gv`
+
+まずは、ノードを足していきましょう。
+
+
+## エッジの作成
+
+`kihon_03.gv`
+
+ここで、ノードをつないでいきましょう。
+
+## グラフの全体設定
+
+`kihon_04.gv`
+`kihon_04change.gv`
+
+これで、目的とした形になりました！
+
+## 動的に生成
+
+* まずは、dot言語内でみてみましょう
+
+`kihon_05.gv`
+
+`@@1`と最後に足した`[1]:`が対応して文字が表示されました。
+ということで、これを利用して動的に生成する方法を考えましょう。
+Rに戻ります。
+
+## Rで動的に生成
+
+```{r}
+flowchart <- 
+{"digraph name {
+  layout='neato'
+  
+  #node:
+  node [shape = rectangle]
+  m1 [pos='0,0!',label  = '@@1'];
+  m2 [pos='0,-2!',label  = '@@2'];
+  m3 [pos='0,-4!'label  = '@@3'];
+  
+  ex1 [pos='2,-1!',label = '@@4'];
+  ex2 [pos='-2,-3!'label = '@@5'];
+
+  inv1 [pos='0,-1!',label = '', shape=invis, width=0, height=0]
+  inv2 [pos='0,-3!'label = '', shape=invis, width=0, height=0]
+
+  m1   -> inv1 [dir='none']
+  inv1 -> m2 
+  m2   -> inv2 [dir='none']
+  inv2 -> m3
+  
+  inv1 -> ex1
+  inv2 -> ex2
+}"}
+
+#このように、flowchartという変数にグラフ部分を保存します。
+#なお、""はすべて’’に変えておいて下さい。
+
+DiagrammeR::grViz(flowchart)
+
+#そうすると、こんな感じで描画されます。
+#@@1部分を埋めて見ましょう。
+
+gen_dot <- function(flowchart,atat1){
+  result <- str_c(
+    flowchart, "\n","[1]:'",atat1,"'"
+  )
+  
+  return(result)
+}
+
+grViz(gen_dot(flowchart, 'this is some new text to add'))
+
+#どうでしょうか？
+#この関数、見た目は恐ろしいですが、
+#やっていることは、flowchart部分の最後に、
+#[1]:'<atat1の内容>'
+#という文字列を入れているだけです。
+
+moji <- str_c("{content of flow chart}","\n", "[1]:'", "new text!","'")
+
+cat(moji)
+
+#ほら、簡単でしょう？
+#注意しないといけないこととして、
+#\nできちんと改行を入れないとエラーになります。
+
+#また、atat1の中で改行したいときは\nだけだとエラーになります、
+grViz(gen_dot(flowchart,"this is some text \n with kaigyou"))
+
+#なぜなら、ただの\nを入れてしまうと、
+moji2 <- str_c("{content of flow chart}","\n","[1]:'", "new \n text","'")
+cat(moji2)
+
+#このように、[1]:'new \n text'としたかったのに、
+#[1]:'new
+#text'
+
+#となってしまい、コードが途中で改行されてしまうからです。
+#ここでは、\nとかきたかったのに、勝手に改行と判断されてしまった
+#ということが問題なので、
+#\\と2回つづけて書いてあげることで、\\をただの\と判断してくれるようになります
+
+moji3 <- str_c("{content of flow chart}","\n","[1]:'", "new \\n text","'")
+cat(moji3)
+
+#ほら！
+#ということで、
+
+grViz(gen_dot(flowchart,"this is some text \\n with kaigyou"))
+
+#改行できました。
+
+#ここまでの知識を利用した課題です。
+#グラフの内容をいじれる関数を作成してみてください。
+
+```
+
+
+
+## パワーポイントのグラフを関数で再現
+
+ 
+  
+   
+    
+できましたか？
+もくてきの機能がついている関数が作成できていればこの課題は合格です！
+ただし、
+次のような関数を作成しておくと、今後、グラフにデータを付け足す場合に便利なので、少し難しめの関数をご紹介します。
+内部`\`の多発は、cat関数が`\\`で`\`一つ分と認識することが原因です。
+実際にどういう文字列がどう処理されるかを勉強するにはよい題材だとおもわれますので、ここではあまり詳し解説しません。
+
+```{r}
+add_atat <- function(graph_string, atat_list){
+  
+  atat_string <- str_c("\n[", 1:length(atat_list), "]:'", atat_list,"'") %>% 
+    reduce(str_c) %>% 
+    str_replace_all("\\\\l","\\\\\\\\\\\\\\\\l") %>% 
+    str_replace_all("\\\\r","\\\\\\\\\\\\\\\\r")
+  
+  result <- str_c(graph_string, atat_string)
+  
+  #reduceはまだ解説していない関数ですが、reduce、map系の関数の説明でまたコースを作成する予定です。一応、簡易な理解としては、パイプ以前で与えられたすべての要素を順番にstr_cで処理して、一つの結果を返す関数という理解をなんとなくしておいていただくだけでここではOKです。
+}
+```
+
+
+再現してみましょう。
+
+```{r}
+flowchart
+atat_list <- list(
+  "処置XXXが実施された患者数 \\n (N = 1000)",
+  "対象となり参加の同意を得た患者数 \\n (N = 870)",
+  "処置が成功し、対象となった\\n最終的な患者数(N = 830)",
+  "除外 (N =130) \\l ・年齢が20歳未満(N=30) \\l ・記録が不十分(N=100) \\l",
+  "除外 (N =40) \\l ・処置が失敗 (N=30) \\l ・同意の取り下げ(N=10)"
+  )
+
+grViz(add_atat(flowchart, atat_list))
+
+```
+
+
+どうでしょうか！！
+
+
+##さらに動的にフローチャートを記載してみる
+
+ここでは、`str_glue`関数というものを利用してみます。
+
+
+```{r}
+str_glue("text {var1}", var1 = "hihihi")
+
+var2 <- "other text"
+
+str_glue("text with {var2}")
+
+# こんな感じで{}の関数を代入することができます。
+# 先ほどのatat_listに適応してみましょう。
+
+E1_1 <- 300
+E1_2 <- 1000
+E1 <- E1_1 + E1_2
+
+E2_1 <- 300
+E2_2 <- 10
+E2 <- E2_1 + E2_2
+
+N1 <- 10000
+N2 <- N1 - E1
+N3 <- N2 - E2
+
+
+  
+atat_list <- list(
+  str_glue("処置XXXが実施された患者数 \\n (N = {N1})"),
+  str_glue("対象となり参加の同意を得た患者数 \\n (N = {N2})"),
+  str_glue("処置が成功し、対象となった\\n最終的な患者数(N = {N3})"),
+  str_glue("除外 (N ={E1}) \\l ・年齢が20歳未満(N={E1_1}) \\l ・記録が不十分(N={E1_2}) \\l"),
+  str_glue("除外 (N ={E2}) \\l ・処置が失敗 (N={E2_1}) \\l ・同意の取り下げ(N={E2_2})")
+  )
+
+#map関数やapply系の関数の存在を知っている人はそちらで記載していただいても
+#問題ありません。（本講座以降に作成する講座で説明予定なので、ここでは使っていません)
+
+grViz(add_atat(flowchart, atat_list))
+
+#うえの数値を適当に書き換えて見ましょう。
+#どうですか？
+#自動で計算されていますか？
+```
+
+
+## おつかれさまでした！
+
+ここまでで、DOT言語を利用して動的なフローチャートを記載する方法をお示ししました。実は、DiagrammeRには、他にもデータフレームからグラフを書く方法もあったりするので、興味がある方は調べて見て下さい。

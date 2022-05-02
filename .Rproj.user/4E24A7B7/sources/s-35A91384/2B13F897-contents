@@ -1,0 +1,35 @@
+digraph name {
+  layout="neato"
+  
+  #node:
+  node [shape = rectangle]
+  m1 [pos="0,0!",label  = '@@1'];
+  m2 [pos="0,-2!",label  = '@@2'];
+  m3 [pos="0,-4!"label  = '@@3'];
+  
+  ex1 [pos="2,-1!",label = '@@4'];
+  ex2 [pos="-2,-3!"label = '@@5'];
+
+  inv1 [pos="0,-1!",label = "", shape=invis, width=0, height=0]
+  inv2 [pos="0,-3!"label = "", shape=invis, width=0, height=0]
+
+  m1   -> inv1 [dir="none"]
+  inv1 -> m2 
+  m2   -> inv2 [dir="none"]
+  inv2 -> m3
+  
+  inv1 -> ex1
+  inv2 -> ex2
+}
+
+[1]:"one \\\\l two"
+[2]:"two"
+[3]:"three"
+[4]:"four"
+[5]:"five"
+
+
+#流れ：
+# 文字を@@1~@@nで置き換える
+# footnoteを追加する
+# 置換された！！！

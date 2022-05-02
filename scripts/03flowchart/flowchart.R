@@ -1,0 +1,444 @@
+library(DiagrammeR)
+
+# インストールされていない場合は、install.packages("DiagrammeR")
+# と入力して実行してください。
+
+??DiagrammeR
+
+#まずは、.gv形式にスクリプトを書くことでできることを確認しましょう！
+
+#inro.gv
+
+#いかがでしょうか。
+#結構複雑な「グラフ」を比較的簡単に記載できていると思います。
+
+#このセクションでは、DiagrammeRを利用して、
+#　　スクリプトから「グラフ」を書く方法の理解
+#　　graphVizを利用したフローチャートの記載
+#　　自動的にフローチャートを記載する
+
+#ところまでをご説明できればと思います。
+#(毎回お断りしていますが、グラフの作り方の説明の動画となりますので、
+#医学的な正しさ等に突っ込みは御遠慮いただけますと幸いです。)
+
+
+#それでは、はじめましょう！
+
+
+#導入------------------------------------
+# 
+# ここで御伝えする方法は、DiagrammeRに備わっている関数を
+# 使わずに直接.gvスクリプトを書くことで描画する方法です
+# DiagrammeRには、便利にグラフを生成する関数も多数備わっておりますが、
+# ここではそれを利用いたしません。
+
+#dot言語と言われるものを書いていくスタイルで進めていきます
+
+# このセクションでは、R言語は脇役な感じになりますので、
+# R言語以外に興味がない場合は、飛ばしていただいてもよいかと思います。
+# 
+# が、
+# 
+# dot言語にある程度習熟すると、フローチャートを自動的
+# に生成できるようになる等のメリットがあるためおすすめです！
+
+
+#----------------基本的なDOT言語の記載方法-----------------------------
+# intro01.gvを開きましょう！
+# ここからは、DOT言語の解説を主に進めます。
+
+
+
+
+
+
+
+
+
+#----------------フローチャートをDOT言語で書くための追加の知識--------
+# kihon00-kihon05a
+# までで、フローチャートを記載する方法を学びます。
+
+
+
+
+
+
+# kihon05bはRと連携する方法を模索します。
+
+# kihon05b: Rとの連携---------------------------------
+
+#まずは、.gvファイルを読み込んでみましょう。
+#gvファイル、内容はただのテキストファイルなので、
+library(tidyverse)
+txt <- read_lines("gv/kihon_05b.gv")
+
+# これを、graphvizで描画してみましょう。
+
+DiagrammeR::grViz(diagram = txt)
+
+# 表示されましたね？
+# この文字列を置き換える方法を考えましょう。
+# 置き換えにはstr_replace_all関数を利用する方法と
+# glue::glue関数を利用する方法を説明します
+# (どちらも同じ効果がありますが、glue関数を利用する
+# 方法は、mapという少し難解が関数が出てきます。
+# mapは今後作成予定のコースで説明する予定なため
+# 難しければ、str_replace_all関数だけの理解でも
+#　フローチャートを描く上では問題ありません。)
+
+# str_replace_all関数を利用する方法
+
+teststring <- "<<first>>が僕の好きな食べ物です。<<first>>の他<<second>>も好きです。"
+
+# この文章の<<>>部分を置き換えることを考えてみましょう。
+str_replace(teststring,"<<first>>","りんご")
+
+# どうでしょうか?<<first>>という部分が置きかわっています。
+#ただし、二つ目の<<first>>には影響がでていません。
+#　全部置き換える場合は、str_replace_allを利用しましょう
+str_replace_all(teststring,"<<first>>","りんご")
+
+# できましたね。str_**関数はパイプでつなぐことも可能なので、
+teststring %>% 
+  str_replace_all("<<first>>","りんご") %>% 
+  str_replace_all("<<second>>","みかん")
+
+#と置き換え可能です。
+
+#では、ここまでの知識を利用して、
+txt
+#の文字列を置き換えて、描画してみましょう。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+txt %>% 
+  str_replace_all("<<first>>" ,"一つ目の置きかえ文章です") %>% 
+  str_replace_all("<<second>>","二つ目！") %>% 
+  str_replace_all("<<third>>"  ,"これで最後！") %>% 
+  DiagrammeR::grViz()
+
+
+# いかがでしょうか？このテクニックを応用すれば、フローチャートの形が
+# 変わらず、中身だけが定期的に変わるようなグラフをRとGrViz/DOT言語を
+# 利用して動的に生成することが可能になります。
+
+#次は、glue関数を利用した置き換えについてです。------------------------
+
+#glue::glue関数は、{}でくくった文字列の内部をRのスクリプトとして処理をする
+#という機能があります。stringrパッケージにもstr_glueという関数があり
+
+?str_glue
+
+#glue:glue関数を利用している関数であると説明があります。
+#ひとまず、str_glueで動作を確認し、よりカスタマイズができるglue::glue関数で
+#grVizのスクリプトを置き換える方法を考えてみましょう。
+
+buf <- "{subject1}が僕の得意な教科で、{point1}点をこの前の試験でとりました。"
+
+subject1 <- "算数"
+point1 <- 89
+
+#こんな感じの変数があるとして、
+str_glue(buf)
+
+# どうでしょうか?非常に簡単に文字列に変数の内容を挿入できました。
+str_c(subject1,"が僕の得意な...")
+
+# また、{}内部は計算も可能なので、
+
+subject2 <- "国語"
+point2 <- 65
+
+buf2<-"苦手なのは{subject2}で、{subject1}より{ abs(point2 - point1) }点{ if_else(point2-point1<0,'低い','高い') }結果でした"
+
+str_glue(buf2)
+
+#と、文章の自動生成みたいなことにも利用できます。
+
+#一応、ここで計算したことを説明しておくと、
+
+diff <- point2 - point1 #苦手-得意な点数差
+abs(diff) #点数差の絶対値
+express2 <- if_else(diff<0,"低い","高い") 
+
+str_glue("苦手なのは{subject2}で、{subject1}より{abs(diff)}点{express2}点数でした。")
+
+#差がマイナスなら低いと表示、
+#プラスなら高いと表示
+#もう少し複雑にするなら
+
+buf3 <- "苦手なのは{subject2}で{express1}、{subject1}より{abs(diff)}点{express2}結果でした。"
+
+point1 <- 100
+point2 <- 80
+diff <- point2 - point1
+express1 <- if_else(diff<0,"","すが")
+express2 <- if_else(diff<0,"低い","も高い") 
+
+str_glue(buf3)
+
+point1 <- 80
+point2 <- 100
+diff <- point2 - point1
+express1 <- if_else(diff<0,"","すが")
+express2 <- if_else(diff<0,"低い","も高い") 
+
+str_glue(buf3)
+
+#------------------------
+# glue関数の使い方
+# では、str_glueの動作は理解いただけたと思うので、
+# 次は、glue::glue関数でフローチャートの置き換えをおこなっていきましょう。
+
+#私たちが記載したGraphVizのスクリプトは、{}ではなく<<>>で置き換えたい部分
+#をマークしています。これは、digraph name {};という{や}がGraphVizでは頻出
+#するため、{}で囲んだ部分がRのスクリプトと解釈するglue関数とは相性が悪いです。
+#さらに、残念なことに、str_glueには{}以外を目印として伝えるオプションが
+#動画作成時点ではないため、{}以外を目印とできる、glue::glue関数を利用しましょう。
+
+buf <- "{var}ではなくて、<<var>>を置き換えられるのは、今のところglue関数"
+var <- "VAR!!!"
+glue::glue(buf, .open="<<", .close=">>")
+
+#では、フローチャートへ適応してみましょう。
+txt <- read_lines("gv/kihon_05b.gv")
+
+txt <- txt[1:9]
+
+#このtxtをglue関数で処理すれば、！　・・・うまくいきません。
+#やってみましょう
+first <- "one"
+second <- "two"
+third <- "three"
+
+glue::glue(txt, .open="<<", .close=">>")
+
+#エラーです。これは、実はglue関数、複数の文字列ベクトルには対応していません。
+#こんな風にすれば、処理できますが、100行とかあるグラフに対しては、
+#とてもではありませんが、やりたくありません。
+
+line1 <- glue::glue(txt[1], .open = "<<", .close=">>")
+line2 <- glue::glue(txt[2], .open = "<<", .close=">>")
+line3 <- glue::glue(txt[3], .open = "<<", .close=">>")
+line4 <- glue::glue(txt[4], .open = "<<", .close=">>")
+line5 <- glue::glue(txt[5], .open = "<<", .close=">>")
+line6 <- glue::glue(txt[6], .open = "<<", .close=">>")
+line7 <- glue::glue(txt[7], .open = "<<", .close=">>")
+line8 <- glue::glue(txt[8], .open = "<<", .close=">>")
+line9 <- glue::glue(txt[9], .open = "<<", .close=">>")
+txt2 <- c(line1,line2,line3,line4,line5,line6,line7,line8,line9)
+
+DiagrammeR::grViz(txt2)
+
+#うえの処理を、もっと簡単に書く方法があります。
+
+#map関数というものを使って、複数のベクトル要素に同じ処理を適応する
+#という方法を見ていきましょう。
+
+first <- "FIRST SENTENCE"
+second <- "SECOND SENTENCE"
+third <- "THIRD SENTENCE"
+
+txt2 <- map_chr(txt, ~{glue::glue(., .open="<<", .close=">>")})
+
+DiagrammeR::grViz(txt2)
+
+
+
+# どうでしょう？このように<<>>で囲まれた文字列を置き換えることに成功しました。
+# この書き方を適応して最後は動的に数字を変える例を見ていきましょう。
+
+# 動的に置き換える---------------------------------
+# まずは、kihon_06.gvを確認してみましょう。
+# 実験的な試みなので、これまで書いてきたグラフより
+# labelの内容はシンプルにしてあります。
+
+script <- read_lines("gv/kihon_06.gv")
+cat(script, sep="\n")
+DiagrammeR::grViz(script)
+
+# こんなデータが手元にあるとします。
+
+tibble(
+  id = 1,
+  age = 34,
+  gender = "male",
+  doui = TRUE,
+  medicine = "A",
+  pre_kensa = 100,
+  post_kensa = 80
+)
+
+#(注：あくまでグラフを描くための例です。内容への突っ込みは・・・)
+
+# では、ランダムにデータを生成する関数を書いてみましょう。
+# 尚、mapとreduceについては、本コースの範囲を超えますが、
+# 簡単に説明すると、reduceは、与えられた要素について、
+# 順番に関数を適応してまとめていく関数です。
+
+gen_line <- function(id){
+  tibble(
+    id = id,
+    age = sample(0:100,1),
+    gender = sample(c("male","female"),1),
+    doui = sample(c(T,T,T,F), 1),
+    medicine = sample(c("A","B","C"), 1),
+    pre_kensa = rnorm(1,100,3),
+    post_kensa = rnorm(1,80,10)
+  )
+}
+
+map(1:5, ~{gen_line(.)}) %>% 
+  reduce(bind_rows)
+
+map_df(1:5, ~{gen_line(.)})
+
+
+
+
+
+dat <- map(1:1000, gen_line) %>% 
+  reduce(bind_rows)
+
+#map_df
+
+#この場合、mapでgen_lineが１から1000まで実行された結果である
+#1000個の1行のtibbleがあり、それらを順番に、reduce関数が、
+#bind_rowsを適応していってくれるという形になっています。
+
+dat
+
+# どうでしょうか？
+
+# ここから、m1～m3、ex1～ex2に該当する数字を取り出していってみましよう。
+
+m1 <- nrow(dat)
+
+ex1 <- dat %>% filter(age<20) %>% nrow()
+
+dat2 <- dat %>% filter(age>=20)
+
+m2 <- nrow(dat2)
+
+ex2 <- dat2 %>% filter(!doui) %>% nrow()
+
+dat3 <- dat2 %>% filter(doui)
+
+m3 <- nrow(dat3)
+
+# そして置き換えてみましょう。
+
+replaced_script <- map_chr(script, ~{ glue::glue(., .open="<<", .close=">>") })
+
+DiagrammeR::grViz(replaced_script)
+
+# どうでしょうかおきかわりましたか？
+
+
+# では課題です。
+# datとscriptを入力として受けて、グラフを返す関数を作ってみましょう。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# できましたか？
+
+return_flowchart <- function(dat, script){
+  m1  <- nrow(dat)
+  ex1 <- dat %>% filter(age<20) %>% nrow()
+  
+  dat2 <- dat %>% filter(age>=20)
+  
+  m2  <- nrow(dat2)
+  ex2 <- dat2 %>% filter(!doui) %>% nrow()
+  
+  dat3 <- dat2 %>% filter(doui)
+  
+  m3 <- nrow(dat3)
+  
+  replaced_script <- map_chr(script, ~{ glue::glue(., .open="<<", .close=">>") })
+  
+  return(DiagrammeR::grViz(replaced_script))
+  
+}
+
+
+# この関数ができていれば、例えば、このフローチャートを毎年出す必要がある
+# 場合,800件のデータが増えていたとして、
+
+newdat <- map(10000:10800, ~{gen_line(.)}) %>% 
+  reduce(bind_rows)
+
+newdat
+
+# 去年のフローチャートは、
+last_year_fc <- return_flowchart(dat,script)
+
+# 今年のフローチャーチは、
+this_year_fc <- return_flowchart(newdat,script)
+
+# 二年間ののフローチャートは、
+two_year_fc <- return_flowchart( bind_rows(dat, newdat), script)
+
+# となります。
+# 保存する場合は、RStudioのアイコンからできますが、
+# プログラム的に保存する場合は、少し手間がかかります。
+
+install.packages("DiagrammeRsvg")
+install.packages("rsvg")
+
+two_year_fc %>% 
+  DiagrammeRsvg::export_svg(.) %>% 
+  charToRaw(.) %>% 
+  rsvg::rsvg_pdf("fc.pdf")
+
+# 以上で、GraphVizを利用したフローチャートの生成はおしまいとなります
+
+
+
+
+#-----------------------------------------------------------
+# 以上で本コースはすべて終了となります
+# いかがでしたでしょうか？
+# 本コースでは、
+#   1 ggplot2でのグラフ表現のレベルアップ
+#   2 cowplotを利用したグラフのまとめ方
+#   3 graphViz/DOT言語を利用したフローチャートの記載
+# を軸にして、R言語を利用した図の描画について
+# 解説を行いました。
+# 
+# このコースが皆様のRライフに良い影響を与えたとなったら
+# 幸いです。
+# 
+# 尚、このコースで全て必要な事項が伝えきれいているとは
+# 思っておりません。
+# 「こんなグラフが書きたいけどどうすれば？」など
+# 困ったことがあったらQ&Aにお聞きください。
+# 時間をみつけて解答していきますので
+# よろしくお願い申し上げます。
+
